@@ -1,0 +1,49 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model User {
+  id Int @id @default(autoincrement())
+  email String @unique @db.VarChar(191)
+  username String @unique @db.VarChar(33)
+  active Boolean @default(false)
+
+  passwordHash String @map("password_hash")
+
+  novels Novel[]
+
+  createdAt DateTime @updatedAt @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  @@map("users")
+}
+
+
+
+model Novel {
+  id Int @id @default(autoincrement())
+
+  mainTitle String @db.VarChar(255) @map("main_title")
+  rusTitle String @db.VarChar(255) @map("rus_title")
+  description String? @db.Text()
+  duration Int? @db.SmallInt 
+  cover String?
+  orgAuthor String? @db.VarChar(255) @map("org_author")
+  orgTranslate String? @db.VarChar(255) @map("org_translate")
+
+  active Boolean @default(true)
+
+  published User @relation(fields: [publishedId], references: [id]) 
+  publishedId Int @map("published_id")
+
+  createdAt DateTime @updatedAt @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  @@map("novels")
+}

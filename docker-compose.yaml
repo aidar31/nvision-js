@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:14
+    restart: always
+    environment:
+      POSTGRES_DB: nvisiondb
+      POSTGRES_USER: aidar
+      POSTGRES_PASSWORD: aidar
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./wsk-b.sql:/docker-entrypoint-initdb.d/wsk-b.sql
+    ports:
+      - "5432:5432"
+ 
+volumes:
+  postgres_data:
