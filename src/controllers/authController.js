@@ -8,6 +8,7 @@ import UsersRepository from "../repository/usersRepository.js";
 import ApiResponse from "../helpers/apiResponse.js";
 import MailerRepository from "../repository/mailerRepository.js";
 import { JWT_SECRET } from "../config.js";
+import { LoginUserDTO, RegisterUserDTO } from "../dtos/authDTOs.js";
 
 
 class AuthController {
@@ -38,7 +39,8 @@ class AuthController {
                 return ApiResponse.send(res, null, errors, null);
             }
 
-            return ApiResponse.send(res, payload, null, null);
+
+            return ApiResponse.send(res, new RegisterUserDTO(payload), null, null);
         } catch (error) {
             console.log("Error: ", error);
             if (error instanceof errors.E_VALIDATION_ERROR) {
@@ -95,7 +97,7 @@ class AuthController {
             const sendEmail = MailerRepository.sendEmailTo(payloadData.email, token);
 
 
-            return ApiResponse.send(res, payloadData, null, null);
+            return ApiResponse.send(res, new LoginUserDTO(payloadData), null, null);
 
         } catch (error) {
             console.log("Error: ", error);

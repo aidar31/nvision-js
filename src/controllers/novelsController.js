@@ -3,7 +3,7 @@ import vine, {errors} from "@vinejs/vine";
 import ApiResponse from "../helpers/apiResponse.js";
 import NovelsRepository from "../repository/novelsRepository.js";
 import { createNovelScheme, updateNovelScheme } from "../validations/novelsValidation.js";
-
+import { NovelDTO } from "../dtos/novelsDTOs.js";
 
 class NovelController {
     static async index(req, res) {
@@ -17,7 +17,9 @@ class NovelController {
                 return ApiResponse.send(res, data, null, null);
             }
 
-            return ApiResponse.send(res, novels, null, null);
+            const novelDTOs = novels.map(novel => new NovelDTO(novel));
+
+            return ApiResponse.send(res, novelDTOs, null, null);
         } catch (error) {
             console.log("Error: ", error);
             const errors = {
@@ -65,7 +67,7 @@ class NovelController {
         try {
             const { novelId } = req.params;
             const novel = await NovelsRepository.getNovelById(Number(novelId));
-            return ApiResponse.send(res, novel, null, null);
+            return ApiResponse.send(res, new NovelDTO(novel), null, null);
         } catch (error) {
             console.log("Error: ", error);
             const errors = {
@@ -83,7 +85,7 @@ class NovelController {
             const payload = await validator.validate(body);
             console.log(payload);
             const novel = await NovelsRepository.updateNovel(Number(novelId), payload);
-            return ApiResponse.send(res, novel, null, null);
+            return ApiResponse.send(res, new NovelDTO(novel), null, null);
         } catch (error) {
             console.log("Error: ", error);
             if (error instanceof errors.E_VALIDATION_ERROR) {
